@@ -153,7 +153,7 @@ export default function Story() {
         const a = audioRef.current
         if (a) fadeAudio(a, 0.08, 1500)
 
-        // After 8 s of raw explosion footage, pause video and show "Uh oh"
+        // After 5 s of raw explosion footage, pause video and show "Uh oh"
         timers.current.push(setTimeout(() => {
           if (vid) vid.pause()           // freeze on the explosion frame
           setPhase('uhoh')
@@ -168,7 +168,7 @@ export default function Story() {
             const a3 = audioRef.current
             if (a3) { a3.volume = 0; fadeAudio(a3, 0.12, 4000) }
           }, 9_000))
-        }, 8_000))
+        }, 5_000))
       }
     }, 100)
   }

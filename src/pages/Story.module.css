@@ -276,21 +276,24 @@
   font-style: italic;
   color: #fff;
   line-height: 1;
+  text-shadow: 0 4px 40px rgba(0, 0, 0, 0.9);
 }
 
 .uhohWho {
   font-family: var(--mono);
   font-size: clamp(10px, 1.4vw, 13px);
   letter-spacing: 0.2em;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
 .uhohNote {
   font-size: clamp(13px, 1.7vw, 15px);
-  color: rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.55);
   max-width: 400px;
   line-height: 1.75;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
 /* ── AFTERMATH ────────────────────────────────────────────────── */
@@ -329,9 +332,9 @@
 
 .nesbittWho {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.45);
   line-height: 1.9;
   margin-bottom: 64px;
 }
@@ -367,26 +370,26 @@
 
 .crewName {
   font-family: var(--serif);
-  font-size: clamp(8px, 0.9vw, 11px);
-  color: rgba(255, 255, 255, 0.6);
+  font-size: clamp(10px, 1.05vw, 13px);
+  color: rgba(255, 255, 255, 0.82);
   padding: 6px 4px 2px;
   line-height: 1.35;
 }
 
 .crewRole {
   font-family: var(--mono);
-  font-size: clamp(7px, 0.65vw, 8px);
+  font-size: clamp(8px, 0.75vw, 10px);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(196, 134, 37, 0.45);
+  color: rgba(196, 134, 37, 0.75);
   padding: 0 4px 8px;
 }
 
 .source {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 0.16em;
-  color: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.35);
   line-height: 1.9;
   margin-bottom: 32px;
 }
