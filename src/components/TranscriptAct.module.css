@@ -1,0 +1,231 @@
+.section {
+  padding: 5rem 1.5rem 6rem;
+}
+
+.inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+/* ---- Act header ---- */
+.actHeader {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.actNumber {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--blue-light);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.actTitle {
+  font-family: var(--serif);
+  font-size: 2.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+/* ---- Transcript block ---- */
+.transcriptBlock {
+  background: #0a0a0c;
+  border: 1px solid #1a1a22;
+  margin-bottom: 4rem;
+}
+
+.transcriptHeader {
+  padding: 2rem 2rem 1.5rem;
+  border-bottom: 1px solid #1a1a22;
+}
+
+.transcriptTitle {
+  font-family: var(--mono);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.transcriptSubtitle {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+
+/* ---- Individual entry ---- */
+.transcript {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #141418;
+  transition: background 0.15s ease;
+}
+
+.entry:hover {
+  background: #0e0e12;
+}
+
+.entry:last-child {
+  border-bottom: none;
+}
+
+.entryHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.timestamp {
+  font-family: var(--mono);
+  font-size: 0.8125rem;
+  color: var(--blue-light);
+  letter-spacing: 0.08em;
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.speaker {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.audio {
+  height: 24px;
+  flex-shrink: 0;
+  filter: invert(0.8) sepia(0.3) saturate(0.5);
+}
+
+.text {
+  font-family: var(--mono);
+  font-size: 1rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.01em;
+}
+
+.annotation {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  line-height: 1.65;
+  border-left: 2px solid var(--blue-dim);
+  padding-left: 0.875rem;
+}
+
+/* ---- Transcript conclusion ---- */
+.conclusion {
+  padding: 2rem 2rem 2.5rem;
+  border-top: 1px solid #1a1a22;
+  background: #0e0e14;
+}
+
+.conclusionEyebrow {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.conclusionText {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.conclusionPara {
+  font-family: var(--serif);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+/* ---- Aftermath ---- */
+.aftermath {
+  padding-top: 1rem;
+}
+
+.aftermathHeader {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.aftermathEyebrow {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.aftermathTitle {
+  font-family: var(--serif);
+  font-size: 1.875rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.25;
+  font-style: italic;
+}
+
+.aftermathText {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.aftermathPara {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+@media (max-width: 640px) {
+  .actTitle {
+    font-size: 2rem;
+  }
+
+  .entry {
+    padding: 1.25rem 1.25rem;
+  }
+
+  .transcriptHeader {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .conclusion {
+    padding: 1.5rem 1.25rem 2rem;
+  }
+
+  .transcriptTitle {
+    font-size: 0.8125rem;
+  }
+
+  .text {
+    font-size: 0.9375rem;
+  }
+
+  .aftermathTitle {
+    font-size: 1.5rem;
+  }
+}

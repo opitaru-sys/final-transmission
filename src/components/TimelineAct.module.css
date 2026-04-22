@@ -1,0 +1,122 @@
+.section {
+  border-bottom: 1px solid #1a1a20;
+}
+
+/* ---- Timeline block ---- */
+.block {
+  padding: 5rem 1.5rem 4rem;
+  max-width: calc(var(--max-w) + 3rem);
+  margin: 0 auto;
+}
+
+.actHeader {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.actNumber {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--blue-light);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.actTitle {
+  font-family: var(--serif);
+  font-size: 2.5rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.designation {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.narrative {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.para {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+/* ---- Warning Signs block ---- */
+.warningBlock {
+  background: var(--bg-warning);
+  border-top: 1px solid #2a2010;
+  border-bottom: 1px solid #2a2010;
+  padding: 4rem 1.5rem 5rem;
+}
+
+.warningHeader {
+  text-align: center;
+  max-width: var(--max-w);
+  margin: 0 auto 3rem;
+}
+
+.warningEyebrow {
+  font-family: var(--mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  color: var(--amber);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.warningTitle {
+  font-family: var(--serif);
+  font-size: 1.875rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.25;
+  font-style: italic;
+}
+
+.warningNarrative {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.warningPara {
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+/* Slightly muted the first paragraph to let it breathe */
+.warningPara:first-child {
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .actTitle {
+    font-size: 2rem;
+  }
+
+  .warningTitle {
+    font-size: 1.5rem;
+  }
+
+  .para,
+  .warningPara {
+    font-size: 1rem;
+  }
+}
