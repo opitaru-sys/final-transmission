@@ -112,6 +112,41 @@ export default function Mission({ mission }: Props) {
 
   useEffect(() => () => stopDroneRef.current(), [])
 
+  // Speak each transcript line aloud as it appears
+  useEffect(() => {
+    if (phase !== 'transmission') {
+      window.speechSynthesis?.cancel()
+      return
+    }
+    const entry = data.transcript[txIdx]
+    if (!entry) return
+
+    window.speechSynthesis.cancel()
+
+    const say = () => {
+      const utt = new SpeechSynthesisUtterance(`${(entry as TranscriptEntry).speaker}. ${(entry as TranscriptEntry).text}`)
+      utt.rate = 0.82
+      utt.pitch = 0.88
+      utt.volume = 1
+      // Prefer a calm, clear English voice
+      const voices = window.speechSynthesis.getVoices()
+      const preferred =
+        voices.find((v) => /daniel|alex|karen/i.test(v.name)) ||
+        voices.find((v) => /en[-_]GB/i.test(v.lang)) ||
+        voices.find((v) => /en/i.test(v.lang))
+      if (preferred) utt.voice = preferred
+      window.speechSynthesis.speak(utt)
+    }
+
+    if (window.speechSynthesis.getVoices().length > 0) {
+      say()
+    } else {
+      window.speechSynthesis.addEventListener('voiceschanged', say, { once: true })
+    }
+
+    return () => window.speechSynthesis.cancel()
+  }, [phase, txIdx, data.transcript])
+
   const advance = useCallback(() => {
     clearTimeout(timerRef.current)
     if (phase === 'hero') {

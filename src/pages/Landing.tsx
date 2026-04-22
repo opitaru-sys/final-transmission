@@ -59,7 +59,7 @@ export default function Landing() {
 
       <div className={`${styles.content} ${visible ? styles.visible : ''}`}>
         <div className={styles.eyebrow}>NASA Space Shuttle Program</div>
-        <h1 className={styles.title}>Final Words</h1>
+        <h1 className={styles.title}>Final Transmission</h1>
         <p className={styles.subtitle}>
           Two missions. Fourteen lives.
           <br />
