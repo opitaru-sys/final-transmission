@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, ReactNode } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import styles from './Story.module.css'
 import { CREW_IMAGES } from '../data/crewImages'
 import challengerJson from '../data/challenger.json'
@@ -57,7 +58,7 @@ const COLUMBIA_BIOS: Record<string, string> = {
 
 // ─── Hooks ───────────────────────────────────────────────────────────────────
 
-function useInView(threshold = 0.15): [React.RefObject<HTMLDivElement>, boolean] {
+function useInView(threshold = 0.15): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
   useEffect(() => {
