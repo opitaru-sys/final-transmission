@@ -513,42 +513,42 @@
   margin-bottom: 36px;
 }
 
-.nesbittAudio {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 32px;
-  padding: 14px 20px;
-  border: 1px solid #1e1a14;
-  background: #080806;
+.nesbittVideoWrap {
+  position: relative;
+  width: 100%;
+  margin-bottom: 24px;
+  background: #000;
+  line-height: 0;
+}
+
+.nesbittVideo {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 
 .nesbittPlayBtn {
-  background: none;
-  border: 1px solid rgba(196, 134, 42, 0.4);
-  color: rgba(196, 134, 42, 0.85);
-  font-size: 14px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(196, 134, 42, 0.5);
+  color: rgba(196, 134, 42, 0.9);
+  font-size: 13px;
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex-shrink: 0;
   transition: border-color 0.2s, color 0.2s;
+  backdrop-filter: blur(4px);
 }
 
 .nesbittPlayBtn:hover {
-  border-color: rgba(196, 134, 42, 0.8);
+  border-color: rgba(196, 134, 42, 0.9);
   color: #c4862a;
-}
-
-.nesbittAudioLabel {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.35);
-  letter-spacing: 0.06em;
 }
 
 .nesbittCta {
@@ -559,26 +559,49 @@
   text-transform: uppercase;
 }
 
-/* ─── Broadcast audio player ────────────────────── */
-.audioPlayer {
+/* ─── Broadcast video player (Challenger transmission) ── */
+.videoPlayer {
   position: fixed;
   top: 72px;
   left: 0;
   right: 0;
-  padding: 10px 24px 8px;
-  background: rgba(0, 0, 0, 0.92);
+  background: #000;
   border-bottom: 1px solid #18160e;
   z-index: 50;
   cursor: default;
 }
 
-.audioLabel {
+.broadcastVideo {
+  width: 100%;
+  display: block;
+  max-height: 160px;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.videoControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.videoMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 14px 4px;
+  background: rgba(0, 0, 0, 0.85);
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.videoMetaLabel {
   font-family: var(--mono);
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.25);
   letter-spacing: 0.06em;
-  margin-bottom: 7px;
-  line-height: 1.4;
 }
 
 .audioControls {
@@ -725,7 +748,206 @@
   cursor: default;
 }
 
-/* ─── Share button ──────────────────────────────── */
+/* ─── Cold open (Challenger hook) ──────────────── */
+.coldOpenSlide {
+  background: #000;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.coldOpenInner {
+  text-align: center;
+  max-width: min(560px, 88vw);
+  padding: 40px 24px;
+  animation: riseIn 0.8s ease forwards;
+}
+
+.coldOpenMeta {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(196, 134, 42, 0.45);
+  margin-bottom: 36px;
+}
+
+.coldOpenText {
+  font-family: var(--serif);
+  font-size: clamp(32px, 6vw, 60px);
+  color: #fff;
+  font-weight: 400;
+  line-height: 1.25;
+  margin-bottom: 22px;
+  font-style: italic;
+}
+
+.coldOpenAttrib {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
+}
+
+.coldOpenBar {
+  width: 48px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 auto;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.coldOpenBarFill {
+  height: 100%;
+  background: rgba(196, 134, 42, 0.6);
+  border-radius: 1px;
+  animation: coldOpenProgress 3.2s linear forwards;
+}
+
+@keyframes coldOpenProgress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* ─── Hero rewind hint ──────────────────────────── */
+.heroRewind {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  animation: pulse 2.2s ease infinite;
+  margin-top: 8px;
+}
+
+/* ─── Crew role row with counter ────────────────── */
+.crewRoleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* override the bottom margin that .crewRole had on its own */
+.crewRoleRow .crewRole {
+  margin-bottom: 0;
+}
+
+.crewCounter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+}
+
+/* ─── Warning top row with counter ─────────────── */
+.warnTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.warnTopRow .warnChapter {
+  margin-bottom: 0;
+}
+
+.warnCounter {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+}
+
+/* ─── Boisjoly evidence memo card ───────────────── */
+.boisjolyCard {
+  border: 1px solid rgba(196, 134, 42, 0.2);
+  background: rgba(196, 134, 42, 0.04);
+  padding: 28px 28px 24px;
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.boisjolyHeader {
+  border-bottom: 1px solid rgba(196, 134, 42, 0.15);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.boisjolyMemo {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(196, 134, 42, 0.55);
+  margin-bottom: 10px;
+}
+
+.boisjolyName {
+  font-family: var(--serif);
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 4px;
+}
+
+.boisjolyTitle {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.boisjolyDate {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(196, 134, 42, 0.45);
+  letter-spacing: 0.1em;
+}
+
+.boisjolyQuote {
+  font-family: var(--serif);
+  font-size: clamp(16px, 2.4vw, 22px);
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* ─── Transcript timestamp + inline share ───────── */
+.txTimeRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.txTimeRow .txTime {
+  margin-bottom: 0;
+}
+
+.txShareIcon {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.18);
+  padding: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  line-height: 0;
+}
+
+.txShareIcon:hover {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.txShareIconCopied {
+  color: #4a8fd4;
+}
+
+/* ─── Share button (legacy — kept for safety) ───── */
 .txShareRow {
   margin-top: 20px;
   cursor: default;
@@ -778,8 +1000,9 @@
 }
 
 /* ─── Transmission: shift entry down to clear fixed header elements ── */
-.txSlideAudio {
-  padding-top: 140px;
+.txSlideVideo {
+  /* video (160px) + controls (38px) + meta (28px) + txHeader (72px) = ~300px */
+  padding-top: 305px;
 }
 
 .txSlideSilence {
@@ -811,33 +1034,28 @@
 /* ─── Mobile adjustments ────────────────────────── */
 @media (max-width: 640px) {
   .nesbittCard {
-    padding: 32px 24px;
+    padding: 20px 16px;
   }
 
   .nesbittQuote {
-    font-size: 20px;
+    font-size: 18px;
   }
 
-  .audioPlayer {
+  .broadcastVideo {
+    max-height: 120px;
+  }
+
+  .videoPlayer {
     top: 68px;
-    padding: 8px 14px 6px;
   }
 
-  .audioLabel {
-    font-size: 8px;
-    display: none; /* hide label on very small screens to save space */
+  .videoMeta .audioSync {
+    display: none; /* hide sync on mobile to save vertical space */
   }
 
-  .audioSync {
-    display: none; /* hide sync controls on mobile to save space */
-  }
-
-  .audioAttrib {
-    margin-top: 3px;
-  }
-
-  .txSlideAudio {
-    padding-top: 100px;
+  /* video(120) + controls(38) + meta(28) + header(68) = ~260 */
+  .txSlideVideo {
+    padding-top: 260px;
   }
 
   .txSlideSilence {
