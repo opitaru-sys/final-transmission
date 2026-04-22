@@ -58,7 +58,7 @@ const WARNINGS = {
 }
 
 const CHALLENGER_VIDEO_URL =
-  'https://archive.org/download/space-shuttle-challenger-disaster-january-28-1986/SpaceShuttleChallengerDisaster-January-28-1986.ia.mp4'
+  'https://archive.org/download/space-shuttle-challenger-disaster-january-28-1986/SpaceShuttleChallengerDisaster-January-28-1986.mp4'
 
 const NESBITT_START = 90
 const NESBITT_END = 119
