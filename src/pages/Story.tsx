@@ -1,281 +1,272 @@
 import { useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import styles from './Story.module.css'
 import { CREW_IMAGES } from '../data/crewImages'
 import challengerJson from '../data/challenger.json'
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const VIDEO_URL =
+  'https://archive.org/download/space-shuttle-challenger-disaster-january-28-1986/SpaceShuttleChallengerDisaster-January-28-1986.mp4'
+
+// Transcript timed to seconds from liftoff (T+0)
+// Two entries at T+0:01 are staggered 3s apart for readability
+const LINES = [
+  { t: 1,  ts: 'T+0:01', speaker: 'Judith Resnik',    text: 'Aaall Riight!' },
+  { t: 4,  ts: 'T+0:01', speaker: 'Michael J. Smith', text: 'Here we go.' },
+  { t: 11, ts: 'T+0:11', speaker: 'Michael J. Smith', text: 'Go you mother.' },
+  { t: 15, ts: 'T+0:15', speaker: 'Judith Resnik',    text: '[Expletive] hot!' },
+  { t: 19, ts: 'T+0:19', speaker: 'Michael J. Smith', text: "Looks like we've got a lot of wind here today." },
+  { t: 40, ts: 'T+0:40', speaker: 'Michael J. Smith', text: "There's Mach 1." },
+  { t: 60, ts: 'T+1:00', speaker: 'Michael J. Smith', text: 'Feel that mother go.' },
+  { t: 67, ts: 'T+1:07', speaker: 'Mission Control',  text: 'Challenger, go at throttle up.' },
+  { t: 72, ts: 'T+1:12', speaker: 'Dick Scobee',      text: 'Roger, go at throttle up.' },
+  { t: 73, ts: 'T+1:13', speaker: 'Michael J. Smith', text: 'Uh oh.' },
+]
+
+const TOTAL_SECONDS = 73
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface CrewMember {
   name: string
   role: string
-  age: number
-  hometown: string
 }
 
-interface TxEntry {
-  timestamp: string
-  speaker: string
-  text: string
-}
-
-// ─── Transcript lines to show (remove system events + routine callouts) ──────
-
-const SKIP_TIMESTAMPS = new Set(['T-6 seconds', 'T+0', 'T+0:07', 'T+0:14', 'T+0:28'])
-
-// ─── Hooks ───────────────────────────────────────────────────────────────────
-
-function useInView(threshold = 0.15): [React.RefObject<HTMLDivElement | null>, boolean] {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true)
-          obs.disconnect()
-        }
-      },
-      { threshold }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [threshold])
-  return [ref, visible]
-}
-
-// ─── Reveal wrapper ───────────────────────────────────────────────────────────
-
-function Reveal({
-  children,
-  delay = 0,
-  className = '',
-}: {
-  children: ReactNode
-  delay?: number
-  className?: string
-}) {
-  const [ref, visible] = useInView()
-  return (
-    <div
-      ref={ref}
-      className={`${styles.reveal} ${visible ? styles.revealVisible : ''} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  )
-}
+type Phase = 'intro' | 'playing' | 'uhoh' | 'aftermath'
 
 // ─── Star canvas ──────────────────────────────────────────────────────────────
 
 function StarCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = ref.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')!
-    const resize = () => {
-      canvas.width = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-    }
+    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight }
     resize()
-    const stars = Array.from({ length: 300 }, () => ({
-      x: Math.random(),
-      y: Math.random(),
-      r: Math.random() * 1.3 + 0.2,
-      alpha: Math.random(),
-      speed: Math.random() * 0.003 + 0.001,
+    const stars = Array.from({ length: 280 }, () => ({
+      x: Math.random(), y: Math.random(),
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(), speed: Math.random() * 0.003 + 0.001,
       dir: Math.random() > 0.5 ? 1 : -1,
     }))
     let raf: number
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      stars.forEach((s) => {
-        s.alpha += s.speed * s.dir
-        if (s.alpha >= 1) s.dir = -1
-        if (s.alpha <= 0) s.dir = 1
+      stars.forEach(s => {
+        s.a += s.speed * s.dir
+        if (s.a >= 1) s.dir = -1
+        if (s.a <= 0) s.dir = 1
         ctx.beginPath()
         ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255,255,255,${Math.max(0, s.alpha)})`
+        ctx.fillStyle = `rgba(255,255,255,${Math.max(0, s.a)})`
         ctx.fill()
       })
       raf = requestAnimationFrame(draw)
     }
     draw()
     window.addEventListener('resize', resize)
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('resize', resize)
-    }
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
   }, [])
-  return <canvas ref={canvasRef} className={styles.starCanvas} />
-}
-
-// ─── Crew grid ────────────────────────────────────────────────────────────────
-
-function CrewGrid({ crew }: { crew: CrewMember[] }) {
-  return (
-    <div className={styles.crewGrid}>
-      {crew.map((member, i) => (
-        <Reveal key={member.name} delay={i * 60}>
-          <div className={styles.crewCard}>
-            <div className={styles.crewImgWrap}>
-              <img
-                src={CREW_IMAGES[member.name]}
-                alt={member.name}
-                className={styles.crewImg}
-              />
-            </div>
-            <div className={styles.crewCardName}>{member.name}</div>
-            <div className={styles.crewCardRole}>{member.role}</div>
-          </div>
-        </Reveal>
-      ))}
-    </div>
-  )
-}
-
-// ─── Transcript line ──────────────────────────────────────────────────────────
-
-function TxLine({ timestamp, speaker, text, index }: TxEntry & { index: number }) {
-  const [ref, visible] = useInView(0.3)
-  const isMC = speaker.startsWith('Mission Control')
-  return (
-    <div
-      ref={ref}
-      className={`${styles.txLine} ${visible ? styles.txLineVisible : ''} ${isMC ? styles.txMC : ''}`}
-      style={{ transitionDelay: `${Math.min(index * 30, 150)}ms` }}
-    >
-      <span className={styles.txTime}>{timestamp}</span>
-      <span className={styles.txWho}>{speaker}</span>
-      <span className={styles.txWords}>&ldquo;{text}&rdquo;</span>
-    </div>
-  )
+  return <canvas ref={ref} className={styles.starCanvas} />
 }
 
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 export default function Story() {
+  const [phase, setPhase] = useState<Phase>('intro')
+  const [lineIdx, setLineIdx] = useState(-1)
+  const [muted, setMuted] = useState(true)
+  const [elapsed, setElapsed] = useState(0)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  const ticker = useRef<ReturnType<typeof setInterval> | null>(null)
+
   const crew = challengerJson.crew as unknown as CrewMember[]
-  const transcript = (challengerJson.transcript as unknown as TxEntry[]).filter(
-    (e) => !SKIP_TIMESTAMPS.has(e.timestamp)
-  )
+
+  const begin = () => {
+    setPhase('playing')
+    const video = videoRef.current
+    if (video) {
+      video.muted = true // start muted (autoplay policy)
+      video.play().catch(() => {})
+    }
+
+    // Transcript line timers
+    LINES.forEach((line, i) => {
+      timers.current.push(setTimeout(() => setLineIdx(i), line.t * 1000))
+    })
+
+    // Elapsed counter
+    const startMs = Date.now()
+    ticker.current = setInterval(() => {
+      setElapsed(Math.min(TOTAL_SECONDS, Math.floor((Date.now() - startMs) / 1000)))
+    }, 200)
+
+    // Transition: "Uh oh." full screen at T+75
+    timers.current.push(setTimeout(() => {
+      setPhase('uhoh')
+      if (ticker.current) clearInterval(ticker.current)
+      if (videoRef.current) videoRef.current.pause()
+    }, 75 * 1000))
+
+    // Transition: aftermath at T+88
+    timers.current.push(setTimeout(() => setPhase('aftermath'), 88 * 1000))
+  }
+
+  const toggleMute = () => {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = !muted
+    setMuted(m => !m)
+  }
+
+  const replay = () => {
+    timers.current.forEach(clearTimeout)
+    timers.current = []
+    if (ticker.current) clearInterval(ticker.current)
+    setPhase('intro')
+    setLineIdx(-1)
+    setElapsed(0)
+    setMuted(true)
+    const video = videoRef.current
+    if (video) { video.pause(); video.currentTime = 0 }
+  }
+
+  useEffect(() => {
+    return () => {
+      timers.current.forEach(clearTimeout)
+      if (ticker.current) clearInterval(ticker.current)
+    }
+  }, [])
+
+  // Format elapsed as T+0:XX or T+1:XX
+  const fmtTime = (s: number) => {
+    if (s < 60) return `T+0:${String(s).padStart(2, '0')}`
+    return `T+1:${String(s - 60).padStart(2, '0')}`
+  }
 
   return (
     <div className={styles.page}>
 
-      {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className={styles.hero}>
-        <StarCanvas />
-        <div className={styles.heroInner}>
-          <div className={styles.heroEyebrow}>STS-51-L &nbsp;&middot;&nbsp; January 28, 1986</div>
-          <div className={styles.heroNum}>73</div>
-          <div className={styles.heroUnit}>seconds.</div>
-          <div className={styles.heroSub}>
-            Everything the crew of Challenger said
-            <br />before the silence.
+      {/* ── Video (rendered always, visible only during playing) ── */}
+      <video
+        ref={videoRef}
+        src={VIDEO_URL}
+        className={`${styles.video} ${phase === 'playing' ? styles.videoOn : ''}`}
+        playsInline
+        muted
+        preload="auto"
+      />
+
+      {/* ══════════ INTRO ══════════ */}
+      {phase === 'intro' && (
+        <div className={styles.intro}>
+          <StarCanvas />
+          <div className={styles.introContent}>
+            <div className={styles.eyebrow}>STS-51-L &nbsp;&middot;&nbsp; January 28, 1986</div>
+            <div className={styles.bigNum}>73</div>
+            <div className={styles.bigUnit}>seconds.</div>
+            <div className={styles.introContext}>
+              The night before launch, engineers begged NASA not to fly.
+              <br />NASA overruled them.
+            </div>
+            <button className={styles.beginBtn} onClick={begin}>
+              &#9654;&ensp;Experience it in real time
+            </button>
+            <div className={styles.introHint}>Sound recommended &nbsp;&middot;&nbsp; 73 seconds</div>
           </div>
         </div>
-        <div className={styles.scrollHint}>&#8595;</div>
-      </section>
+      )}
 
-      {/* ── MEMO ─────────────────────────────────────────────── */}
-      <section className={styles.memoSection}>
-        <Reveal>
-          <div className={styles.memoSetup}>
-            The night before launch, an engineer wrote this.
-          </div>
-        </Reveal>
-        <Reveal delay={200}>
-          <div className={styles.memoCard}>
-            <div className={styles.memoLabel}>
-              MORTON THIOKOL &nbsp;&middot;&nbsp; JANUARY 27, 1986
+      {/* ══════════ PLAYING ══════════ */}
+      {phase === 'playing' && (
+        <div className={styles.playing}>
+          {/* Dark scrim over video */}
+          <div className={styles.scrim} />
+
+          {/* Timer top-left */}
+          <div className={styles.timer}>{fmtTime(elapsed)}</div>
+
+          {/* Sound toggle top-right */}
+          <button className={styles.soundBtn} onClick={toggleMute}>
+            {muted ? '🔇 Tap for sound' : '🔊 Sound on'}
+          </button>
+
+          {/* Caption */}
+          {lineIdx >= 0 && (
+            <div key={lineIdx} className={styles.caption}>
+              <div className={styles.captionWho}>
+                {LINES[lineIdx].speaker}&ensp;&middot;&ensp;{LINES[lineIdx].ts}
+              </div>
+              <div className={styles.captionText}>
+                &ldquo;{LINES[lineIdx].text}&rdquo;
+              </div>
             </div>
-            <blockquote className={styles.memoQuote}>
-              &ldquo;If we do not take immediate action to solve the problem
-              with the SRB O-ring sealing, then we stand in jeopardy of
-              losing a flight along with all the people.&rdquo;
-            </blockquote>
-            <div className={styles.memoCredit}>
-              Roger Boisjoly, Thiokol engineer
-            </div>
-          </div>
-        </Reveal>
-        <Reveal delay={400}>
-          <div className={styles.memoOutcome}>
-            NASA overruled the engineers. The launch happened anyway.
-          </div>
-        </Reveal>
-      </section>
+          )}
 
-      {/* ── CREW ─────────────────────────────────────────────── */}
-      <section className={styles.crewSection}>
-        <Reveal>
-          <div className={styles.crewHeadline}>Seven people flew that morning.</div>
-        </Reveal>
-        <CrewGrid crew={crew} />
-      </section>
-
-      {/* ── TRANSCRIPT ───────────────────────────────────────── */}
-      <section className={styles.txSection}>
-        <Reveal>
-          <div className={styles.txHeader}>
-            <span className={styles.txLabel}>THE LAST 73 SECONDS</span>
-            <span className={styles.txSub}>Cockpit voice recorder &nbsp;&middot;&nbsp; 11:38 AM Eastern</span>
+          {/* Progress bar */}
+          <div className={styles.progressTrack}>
+            <div
+              className={styles.progressFill}
+              style={{ animationDuration: `${TOTAL_SECONDS}s` }}
+            />
           </div>
-        </Reveal>
-        {transcript.map((entry, i) => (
-          <TxLine key={i} {...entry} index={i} />
-        ))}
-      </section>
+        </div>
+      )}
 
-      {/* ── "UH OH." ─────────────────────────────────────────── */}
-      <section className={styles.climax}>
-        <Reveal>
-          <div className={styles.climaxText}>&ldquo;Uh oh.&rdquo;</div>
-        </Reveal>
-        <Reveal delay={500}>
-          <div className={styles.climaxWho}>
-            T+1:13 &nbsp;&mdash;&nbsp; Michael J. Smith &nbsp;&middot;&nbsp; Pilot
+      {/* ══════════ UH OH ══════════ */}
+      {phase === 'uhoh' && (
+        <div className={styles.uhoh}>
+          <div className={styles.uhohText}>&ldquo;Uh oh.&rdquo;</div>
+          <div className={styles.uhohWho}>
+            T+1:13 &nbsp;&mdash;&nbsp; Michael J. Smith &nbsp;&middot;&nbsp; Pilot, STS-51-L
           </div>
-        </Reveal>
-        <Reveal delay={800}>
-          <div className={styles.climaxNote}>
+          <div className={styles.uhohNote}>
             Last words on the cockpit voice recorder.
             <br />The orbiter broke apart eleven seconds later.
           </div>
-        </Reveal>
-      </section>
-
-      {/* ── AFTERMATH + NAMES ────────────────────────────────── */}
-      <section className={styles.endSection}>
-        <Reveal>
-          <blockquote className={styles.nesbitt}>
-            &ldquo;Obviously a major malfunction.&rdquo;
-          </blockquote>
-        </Reveal>
-        <Reveal delay={300}>
-          <div className={styles.nesbittWho}>
-            Jack Riley Nesbitt &nbsp;&middot;&nbsp; NASA Public Affairs
-            <br />11:39:13 AM &nbsp;&middot;&nbsp; 73 seconds after liftoff
-          </div>
-        </Reveal>
-        <div className={styles.names}>
-          {crew.map((c, i) => (
-            <Reveal key={c.name} delay={i * 90}>
-              <div className={styles.name}>{c.name}</div>
-            </Reveal>
-          ))}
         </div>
-        <Reveal delay={800}>
-          <div className={styles.source}>
-            Drawn from NASA records and the Rogers Commission Report, 1986.
+      )}
+
+      {/* ══════════ AFTERMATH ══════════ */}
+      {phase === 'aftermath' && (
+        <div className={styles.aftermath}>
+          <div className={styles.aftermathInner}>
+            <blockquote className={styles.nesbitt}>
+              &ldquo;Obviously a major malfunction.&rdquo;
+            </blockquote>
+            <div className={styles.nesbittWho}>
+              Jack Riley Nesbitt &nbsp;&middot;&nbsp; NASA Public Affairs
+              <br />11:39:13 AM &nbsp;&middot;&nbsp; 73 seconds after liftoff
+            </div>
+
+            <div className={styles.crewGrid}>
+              {crew.map((c) => (
+                <div key={c.name} className={styles.crewCard}>
+                  <div className={styles.crewImgWrap}>
+                    <img
+                      src={CREW_IMAGES[c.name]}
+                      alt={c.name}
+                      className={styles.crewImg}
+                    />
+                  </div>
+                  <div className={styles.crewName}>{c.name}</div>
+                  <div className={styles.crewRole}>{c.role}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.source}>
+              Drawn from NASA records and the Rogers Commission Report, 1986.
+            </div>
+
+            <button className={styles.replayBtn} onClick={replay}>
+              &#8635;&ensp;Watch again
+            </button>
           </div>
-        </Reveal>
-      </section>
+        </div>
+      )}
 
     </div>
   )
