@@ -76,7 +76,7 @@
   font-size: clamp(10px, 1.4vw, 13px);
   letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: rgba(196, 134, 37, 0.6);
+  color: rgba(196, 134, 37, 0.85);
   margin-bottom: 16px;
 }
 
@@ -93,7 +93,7 @@
   font-family: var(--serif);
   font-size: clamp(32px, 6vw, 80px);
   font-style: italic;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.7);
   margin-top: 4px;
   margin-bottom: 28px;
 }
@@ -101,7 +101,7 @@
 .introContext {
   font-family: var(--serif);
   font-size: clamp(14px, 1.8vw, 18px);
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.65);
   line-height: 1.75;
   margin-bottom: 40px;
 }
@@ -109,8 +109,8 @@
 .beginBtn {
   display: inline-block;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.9);
   font-family: var(--sans);
   font-size: clamp(14px, 1.8vw, 17px);
   letter-spacing: 0.06em;
@@ -128,9 +128,9 @@
 
 .introHint {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.5);
   line-height: 1.9;
 }
 
