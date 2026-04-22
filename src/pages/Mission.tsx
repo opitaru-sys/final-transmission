@@ -107,7 +107,7 @@ export default function Mission({ mission }: Props) {
   const [imgErrors, setImgErrors] = useState<Set<string>>(new Set())
   const [audioActive, setAudioActive] = useState(false)
 
-  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const stopDroneRef = useRef<() => void>(() => {})
 
   useEffect(() => () => stopDroneRef.current(), [])
