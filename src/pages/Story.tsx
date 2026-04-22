@@ -76,7 +76,6 @@ function StarCanvas() {
 export default function Story() {
   const [phase, setPhase] = useState<Phase>('intro')
   const [lineIdx, setLineIdx] = useState(-1)
-  const [muted, setMuted] = useState(true)
   const [elapsed, setElapsed] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
@@ -88,47 +87,45 @@ export default function Story() {
     setPhase('playing')
     const video = videoRef.current
     if (video) {
-      video.muted = true // start muted (autoplay policy)
+      video.currentTime = 0
+      video.muted = true
       video.play().catch(() => {})
     }
 
-    // Transcript line timers
-    LINES.forEach((line, i) => {
-      timers.current.push(setTimeout(() => setLineIdx(i), line.t * 1000))
-    })
-
-    // Elapsed counter
+    // Drive everything from a 100ms poll that prefers video.currentTime
+    // but falls back to wall clock if the video stalls or fails to load.
     const startMs = Date.now()
     ticker.current = setInterval(() => {
-      setElapsed(Math.min(TOTAL_SECONDS, Math.floor((Date.now() - startMs) / 1000)))
-    }, 200)
+      const vid = videoRef.current
+      // Use video time if the video is actually playing; else use wall clock
+      const t = (vid && vid.currentTime > 0.1) ? vid.currentTime
+                                                : (Date.now() - startMs) / 1000
 
-    // Transition: "Uh oh." full screen at T+75
-    timers.current.push(setTimeout(() => {
-      setPhase('uhoh')
-      if (ticker.current) clearInterval(ticker.current)
-      if (videoRef.current) videoRef.current.pause()
-    }, 75 * 1000))
+      setElapsed(Math.min(TOTAL_SECONDS, Math.floor(t)))
 
-    // Transition: aftermath at T+88
-    timers.current.push(setTimeout(() => setPhase('aftermath'), 88 * 1000))
-  }
+      // Show the most recent line whose timestamp has been reached
+      const idx = LINES.reduce<number>((best, line, i) => t >= line.t ? i : best, -1)
+      setLineIdx(idx)
 
-  const toggleMute = () => {
-    const video = videoRef.current
-    if (!video) return
-    video.muted = !muted
-    setMuted(m => !m)
+      // Transition to "Uh oh." full screen
+      if (t >= TOTAL_SECONDS + 2) {
+        if (ticker.current) clearInterval(ticker.current)
+        setPhase('uhoh')
+        if (vid) vid.pause()
+
+        // Aftermath after 10 s of silence
+        timers.current.push(setTimeout(() => setPhase('aftermath'), 10_000))
+      }
+    }, 100)
   }
 
   const replay = () => {
-    timers.current.forEach(clearTimeout)
+    timers.current.forEach(id => clearTimeout(id))
     timers.current = []
     if (ticker.current) clearInterval(ticker.current)
     setPhase('intro')
     setLineIdx(-1)
     setElapsed(0)
-    setMuted(true)
     const video = videoRef.current
     if (video) { video.pause(); video.currentTime = 0 }
   }
@@ -174,7 +171,10 @@ export default function Story() {
             <button className={styles.beginBtn} onClick={begin}>
               &#9654;&ensp;Experience it in real time
             </button>
-            <div className={styles.introHint}>Sound recommended &nbsp;&middot;&nbsp; 73 seconds</div>
+            <div className={styles.introHint}>
+              Footage: NASA external broadcast
+              <br />Words: cockpit voice recorder, recovered after the disaster
+            </div>
           </div>
         </div>
       )}
@@ -188,10 +188,8 @@ export default function Story() {
           {/* Timer top-left */}
           <div className={styles.timer}>{fmtTime(elapsed)}</div>
 
-          {/* Sound toggle top-right */}
-          <button className={styles.soundBtn} onClick={toggleMute}>
-            {muted ? '🔇 Tap for sound' : '🔊 Sound on'}
-          </button>
+          {/* Source label top-right — replaces the confusing sound toggle */}
+          <div className={styles.sourceTag}>COCKPIT VOICE RECORDER</div>
 
           {/* Caption */}
           {lineIdx >= 0 && (

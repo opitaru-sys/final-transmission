@@ -129,9 +129,9 @@
 .introHint {
   font-family: var(--mono);
   font-size: 10px;
-  letter-spacing: 0.22em;
-  color: rgba(255, 255, 255, 0.2);
-  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.22);
+  line-height: 1.9;
 }
 
 /* ── PLAYING ──────────────────────────────────────────────────── */
@@ -165,26 +165,17 @@
   animation: fadeIn 0.5s ease;
 }
 
-/* Sound button */
-.soundBtn {
+/* Source tag */
+.sourceTag {
   position: absolute;
-  top: 20px;
+  top: 24px;
   right: 24px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.6);
-  font-family: var(--sans);
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.25);
   animation: fadeIn 0.5s ease;
-}
-
-.soundBtn:hover {
-  border-color: rgba(255, 255, 255, 0.5);
-  color: #fff;
 }
 
 /* Caption */
