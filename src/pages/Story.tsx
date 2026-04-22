@@ -35,7 +35,7 @@ interface CrewMember {
   role: string
 }
 
-type Phase = 'intro' | 'playing' | 'uhoh' | 'aftermath'
+type Phase = 'intro' | 'playing' | 'explosion' | 'uhoh' | 'aftermath'
 
 // ─── Star canvas ──────────────────────────────────────────────────────────────
 
@@ -144,22 +144,31 @@ export default function Story() {
       const idx = LINES.reduce<number>((best, line, i) => t >= line.t ? i : best, -1)
       setLineIdx(idx)
 
-      // Transition to "Uh oh." full screen
+      // After "Uh oh" — let explosion footage play raw for 8 s, then freeze
       if (t >= TOTAL_SECONDS + 2) {
         if (ticker.current) clearInterval(ticker.current)
-        setPhase('uhoh')
-        if (vid) vid.pause()
+        setPhase('explosion')
 
-        // Fade music to silence as "Uh oh" hits — the quiet is the point
+        // Drop music low but don't kill it yet — let the visuals breathe
         const a = audioRef.current
-        if (a) fadeAudio(a, 0, 2000)
+        if (a) fadeAudio(a, 0.08, 1500)
 
-        // Aftermath after 10 s of silence, then bring music back softly
+        // After 8 s of raw explosion footage, pause video and show "Uh oh"
         timers.current.push(setTimeout(() => {
-          setPhase('aftermath')
+          if (vid) vid.pause()           // freeze on the explosion frame
+          setPhase('uhoh')
+
+          // Now fade to silence — the quiet is the point
           const a2 = audioRef.current
-          if (a2) { a2.volume = 0; fadeAudio(a2, 0.12, 4000) }
-        }, 10_000))
+          if (a2) fadeAudio(a2, 0, 2500)
+
+          // Aftermath after 9 s of frozen silence, then music creeps back
+          timers.current.push(setTimeout(() => {
+            setPhase('aftermath')
+            const a3 = audioRef.current
+            if (a3) { a3.volume = 0; fadeAudio(a3, 0.12, 4000) }
+          }, 9_000))
+        }, 8_000))
       }
     }, 100)
   }
@@ -197,7 +206,7 @@ export default function Story() {
       <video
         ref={videoRef}
         src={VIDEO_URL}
-        className={`${styles.video} ${phase === 'playing' ? styles.videoOn : ''}`}
+        className={`${styles.video} ${(phase === 'playing' || phase === 'explosion' || phase === 'uhoh') ? styles.videoOn : ''}`}
         playsInline
         muted
         preload="auto"
@@ -260,6 +269,13 @@ export default function Story() {
               style={{ animationDuration: `${TOTAL_SECONDS}s` }}
             />
           </div>
+        </div>
+      )}
+
+      {/* ══════════ EXPLOSION ══════════ */}
+      {phase === 'explosion' && (
+        <div className={styles.explosion}>
+          <div className={styles.explosionScrim} />
         </div>
       )}
 
