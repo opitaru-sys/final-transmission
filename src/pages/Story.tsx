@@ -5,6 +5,9 @@ import challengerJson from '../data/challenger.json'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
+// Drop any ambient .mp3 into public/ and rename it to ambient.mp3
+const AMBIENT_URL = '/ambient.mp3'
+
 const VIDEO_URL =
   'https://archive.org/download/space-shuttle-challenger-disaster-january-28-1986/SpaceShuttleChallengerDisaster-January-28-1986.mp4'
 
@@ -71,6 +74,30 @@ function StarCanvas() {
   return <canvas ref={ref} className={styles.starCanvas} />
 }
 
+// ─── Audio fade helper ────────────────────────────────────────────────────────
+
+function fadeAudio(
+  audio: HTMLAudioElement,
+  targetVol: number,
+  durationMs: number,
+  onDone?: () => void,
+) {
+  const startVol = audio.volume
+  const steps = Math.max(1, Math.round(durationMs / 50))
+  const delta = (targetVol - startVol) / steps
+  let step = 0
+  const id = setInterval(() => {
+    step++
+    audio.volume = Math.min(1, Math.max(0, startVol + delta * step))
+    if (step >= steps) {
+      clearInterval(id)
+      audio.volume = targetVol
+      onDone?.()
+    }
+  }, 50)
+  return id
+}
+
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 export default function Story() {
@@ -78,6 +105,7 @@ export default function Story() {
   const [lineIdx, setLineIdx] = useState(-1)
   const [elapsed, setElapsed] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
   const ticker = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -90,6 +118,15 @@ export default function Story() {
       video.currentTime = 0
       video.muted = true
       video.play().catch(() => {})
+    }
+
+    // Start ambient audio — fade in from silence over 3 s
+    const amb = audioRef.current
+    if (amb) {
+      amb.currentTime = 0
+      amb.volume = 0
+      amb.play().catch(() => {})
+      fadeAudio(amb, 0.28, 3000)
     }
 
     // Drive everything from a 100ms poll that prefers video.currentTime
@@ -113,8 +150,16 @@ export default function Story() {
         setPhase('uhoh')
         if (vid) vid.pause()
 
-        // Aftermath after 10 s of silence
-        timers.current.push(setTimeout(() => setPhase('aftermath'), 10_000))
+        // Fade music to silence as "Uh oh" hits — the quiet is the point
+        const a = audioRef.current
+        if (a) fadeAudio(a, 0, 2000)
+
+        // Aftermath after 10 s of silence, then bring music back softly
+        timers.current.push(setTimeout(() => {
+          setPhase('aftermath')
+          const a2 = audioRef.current
+          if (a2) { a2.volume = 0; fadeAudio(a2, 0.12, 4000) }
+        }, 10_000))
       }
     }, 100)
   }
@@ -128,6 +173,8 @@ export default function Story() {
     setElapsed(0)
     const video = videoRef.current
     if (video) { video.pause(); video.currentTime = 0 }
+    const amb = audioRef.current
+    if (amb) { amb.pause(); amb.currentTime = 0; amb.volume = 0 }
   }
 
   useEffect(() => {
@@ -155,6 +202,9 @@ export default function Story() {
         muted
         preload="auto"
       />
+
+      {/* ── Ambient audio (hidden, controlled by fade helpers) ── */}
+      <audio ref={audioRef} src={AMBIENT_URL} loop preload="auto" />
 
       {/* ══════════ INTRO ══════════ */}
       {phase === 'intro' && (
